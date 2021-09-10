@@ -71,6 +71,7 @@ module.exports = function (RED) {
 
       // Start Swagger / OpenApi
       Swagger(openApiUrl).then((client) => {
+        node.status({ fill: "yellow", shape: "dot", text: "Retrieving..." })
         client.execute({
           operationId,
           pathName,
@@ -88,15 +89,18 @@ module.exports = function (RED) {
           }
         })
           .then((res) => {
+            node.status({ fill: "green", shape: "dot", text: `${res.status} ${res.statusText}` })
             msg[container] = res
             if (msg[container].text) delete msg[container].text
             if (msg[container].data) delete msg[container].data
             if (msg[container].obj) delete msg[container].obj
             node.send(msg)
           }).catch((e) => {
+            node.status({ fill: "red", shape: "dot", text: `${e.status} ${e}` })
             sendError(node, config, msg, e)
           })
       }).catch(e => {
+        node.status({ fill: "blue", shape: "dot", text: "FetchError" })
         sendError(node, config, msg, e)
       })
     })
