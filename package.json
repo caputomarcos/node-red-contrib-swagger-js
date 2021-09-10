@@ -12,25 +12,19 @@
     "swagger-client": "^3.12.2"
   },
   "deprecated": false,
-  "description": "Swagger client for node-red ",
+  "description": "Swagger js for node-red ",
   "devDependencies": {
     "standard": "^16.0.3",
     "svelte-integration-red": "^0.1.34"
   },
   "keywords": [
     "node-red",
-    "swagger",
     "swagger client",
-    "openApi",
-    "openApi client",
-    "open api",
-    "open api client",
-    "open",
     "api"
   ],
   "license": "MIT",
   "main": "swagger.js",
-  "name": "node-red-contrib-swagger-client",
+  "name": "node-red-contrib-swagger-js",
   "node-red": {
     "nodes": {
       "swagger": "swagger.js"
@@ -38,10 +32,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/caputomarcos/node-red-contrib-swagger-client.git"
+    "url": "git+https://github.com/caputomarcos/node-red-contrib-swagger-js.git"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "version": "3.0.3"
+  "version": "1.0.0"
 }
