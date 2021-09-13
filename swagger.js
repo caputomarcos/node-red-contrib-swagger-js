@@ -1,6 +1,6 @@
 const Swagger = require('swagger-client')
 
-function sendError (node, config, msg, e) {
+function sendError(node, config, msg, e) {
   let path = config.operationData.path ? config.operationData.path.split("/") : 'Container'
   let container = config.container ? config.container : path[path.length - 1]
   // node.error can't save the data we
@@ -8,7 +8,7 @@ function sendError (node, config, msg, e) {
   msg[container] = e.response || e
   if (msg[container].text) delete msg[container].text
   if (msg[container].data) delete msg[container].data
-  if (msg[container].obj) delete msg[container].obj   
+  if (msg[container].obj) delete msg[container].obj
   if (config.errorHandling === 'other output') {
     node.send([null, msg])
   } else if (config.errorHandling === 'throw exception') {
@@ -20,18 +20,20 @@ function sendError (node, config, msg, e) {
 
 
 module.exports = function (RED) {
-  function openApiRed (config) {
+  function openApiRed(config) {
     RED.nodes.createNode(this, config)
     const node = this
 
     node.on('input', function (msg) {
       let openApiUrl = config.openApiUrl
       if (msg.openApi && msg.openApi.url) openApiUrl = msg.openApi.url
+      let propagate = config.propagate
+      if (msg.openApi && msg.openApi.propagate) propagate = msg.openApi.propagate
       let path = config.operationData.path ? config.operationData.path.split("/") : 'Container'
       let container = config.container ? config.container : path[path.length - 1]
       if (msg.openApi && msg.openApi.container) container = msg.openApi.container
       let parameters = {}
-      let requestBody = {} 
+      let requestBody = {}
       if (msg.openApi && msg.openApi.parameters) {
         parameters = msg.openApi.parameters
       } else {
@@ -47,7 +49,7 @@ module.exports = function (RED) {
             return node.error(`Required input for ${param.name} is missing.`, msg)
           }
           if (param.isActive && param.name !== 'Request body') {
-          // if (param.isActive) {
+            // if (param.isActive) {
             parameters[param.name] = evaluatedInput
           }
           if (param.isActive && param.name === 'Request body') {
@@ -91,6 +93,7 @@ module.exports = function (RED) {
           .then((res) => {
             node.status({ fill: "green", shape: "dot", text: `${res.status} ${res.statusText}` })
             msg[container] = res
+            if (propagate === false) delete msg.authorization
             if (msg[container].text) delete msg[container].text
             if (msg[container].data) delete msg[container].data
             if (msg[container].obj) delete msg[container].obj
